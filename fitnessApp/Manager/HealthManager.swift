@@ -23,6 +23,22 @@ extension Date{
 		components.weekday = 2
 		return calendar.date(from: components) ?? Date()
 	}
+	
+	func fetchMontStartAndEndDate()->(Date,Date){
+		let calendar = Calendar.current
+		let startDateComponent = calendar.dateComponents([.year,.month],from: calendar.startOfDay(for: self))
+		let startDate = calendar.date(from: startDateComponent) ?? self
+		let endDate = calendar.date(byAdding: DateComponents(month:1,day: -1), to: startDate) ?? self
+		
+		return (startDate , endDate)
+		
+	}
+	
+	func formattedWorkoutDate()->String{
+		let formatter = DateFormatter()
+		formatter.dateFormat="MM d"
+		return formatter.string(from: self)
+	}
 }
 
 
@@ -36,6 +52,24 @@ extension Double{
 	}
 }
 
+extension HKWorkout {
+	/// Récupère l'énergie active brûlée de manière sécurisée pour iOS 18+ et rétrocompatible
+	var activeEnergyBurnedQuantity: HKQuantity? {
+		if #available(iOS 18.0, watchOS 11.0, macOS 15.0, tvOS 18.0, *) {
+			// Nouvelle méthode recommandée pour iOS 18+
+			guard let energyType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned) else { return nil }
+			return self.statistics(for: energyType)?.sumQuantity()
+		} else {
+			// Ancienne méthode pour préserver la compatibilité avec iOS 17 et versions antérieures
+			return self.totalEnergyBurned
+		}
+	}
+	
+	/// Exemple pour obtenir directement la valeur en Kcal (Double)
+	var kilocaloriesBurned: Double? {
+		return activeEnergyBurnedQuantity?.doubleValue(for: .kilocalorie())
+	}
+}
 
 enum HealthError: Error {
 	case requeteEchouee
@@ -241,5 +275,43 @@ class HealthManager{
 		]
 		
 	}
+	
+	
+	//  MARK: Recent workouts
+	
+	func fetchWorkoutsForMonth(month:Date, completion: @escaping(Result<[Workout],Error>)->Void) {
+		let workouts = HKSampleType.workoutType()
+		let (startDate,endDate) = month.fetchMontStartAndEndDate()
+		let predicate=HKQuery.predicateForSamples(withStart: startDate, end: endDate)
+		
+		let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+		let query = HKSampleQuery(sampleType: workouts, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [sortDescriptor]){_,result,error in
+			
+			guard let workouts = result as? [HKWorkout] ,error==nil else {
+				completion(.failure(URLError(.badURL)))
+				return
+			}
+			
+			let workoutArray = workouts.map({
+				Workout(
+					title: $0.workoutActivityType.systemImageName,
+					image: $0.workoutActivityType.systemImageName,
+					tintColor:$0.workoutActivityType.associatedColor,
+					duration: "\(Int($0.duration)/60 )",
+					date:$0.startDate.formattedWorkoutDate(),
+					calories: $0.activeEnergyBurnedQuantity?.doubleValue(for: .kilocalorie()).formattedNumberToString() ?? "-")
+			})
+
+			completion(.success(workoutArray))
+		}
+		
+		
+		
+		healthStore.execute(query)
+	
+		
+		
+	}
+	
 	
 }

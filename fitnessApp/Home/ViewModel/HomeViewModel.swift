@@ -17,6 +17,7 @@ class HomeViewModel: ObservableObject {
 	@Published var exercise:Int = 600
 	@Published var standTime:Int = 400
 	@Published var activities = [Activity]()
+	@Published var workouts = [Workout]()
 	
 	var mockActivities=[
 		Activity( title: "Today steps",
@@ -138,6 +139,19 @@ class HomeViewModel: ObservableObject {
 			case .failure(let failure):
 				print(failure)
 				
+			}
+		}
+	}
+	
+	func fetchRecentWorkouts(){
+		healthManger.fetchWorkoutsForMonth(month:Date()) { (result) in
+			switch result {
+			case .success(let workouts):
+				DispatchQueue.main.async {
+					self.workouts = Array(workouts.prefix(4))
+				}
+			case .failure(let failure):
+				print(failure)
 			}
 		}
 	}

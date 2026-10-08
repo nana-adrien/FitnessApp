@@ -32,8 +32,8 @@
 		CE9BB71330774F6600733403 = {
 			isa = PBXGroup;
 			children = (
-				CE9BB71E30774F6600733403 /* fitnessApp */,
 				CE9BB71D30774F6600733403 /* Products */,
+				CE9BB71E30774F6600733403 /* fitnessApp */,
 			);
 			sourceTree = "<group>";
 		};
