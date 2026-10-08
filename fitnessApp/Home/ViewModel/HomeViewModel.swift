@@ -6,12 +6,22 @@
 //
 import SwiftUI
 import Combine
+import HealthKit
+
+
+extension Date{
+	static var startOfDay:Date{
+		let calendar = Calendar.current
+		 return calendar.startOfDay(for: Date())
+	}
+}
 
 class HomeViewModel: ObservableObject {
+	let healthMange = HealthManager.shared
 	
-	 var calories:Int = 123
-	 var active:Int = 600
-	 var stand:Int = 400
+	@Published var calories:Int = 0
+	@Published var exercise:Int = 600
+	@Published var standTime:Int = 400
 	
 	var mockActivities=[
 		Activity(id: 0, title: "Today steps",
@@ -38,4 +48,61 @@ class HomeViewModel: ObservableObject {
 	]
 	
 	
+	init(){
+		Task{
+			do{
+				try await healthMange.requestHealthKitAccess()
+				fetchTodayCalories()
+				fetchTodayExerciceTime()
+				fetchTodayStandHours()
+				
+			} catch{
+				print(error.localizedDescription)
+			}
+		}
+		
+	}
+	
+	
+	func fetchTodayCalories(){
+		healthMange.fechTodayStandTime { (result) in
+			switch result {
+			case .success( let calories):
+				DispatchQueue.main.async {
+					self.calories = Int(calories)
+				}
+			case .failure(let failure):
+				print(failure.localizedDescription)
+				
+			}
+		}
+	}
+	func fetchTodayExerciceTime(){
+		
+		healthMange.fechTodayStandTime { (result) in
+			switch result {
+			case .success( let exercise):
+				DispatchQueue.main.async {
+					self.exercise = Int(exercise)
+				}
+			case .failure(let failure):
+				print(failure.localizedDescription)
+				
+			}
+		}
+	}
+	func fetchTodayStandHours(){
+		
+		healthMange.fechTodayStandTime { (result) in
+			switch result {
+			case .success( let hours):
+				DispatchQueue.main.async {
+					self.standTime = hours
+				}
+			case .failure(let failure):
+				print(failure.localizedDescription)
+				
+			}
+		}
+	}
 }

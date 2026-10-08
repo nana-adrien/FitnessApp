@@ -39,7 +39,7 @@ struct HomeView: View {
 							VStack(alignment: .leading,spacing: 8){
 								Text("Active")
 									.font(.callout)
-								Text("\(viewModel.active) min")
+								Text("\(viewModel.exercise) min")
 									.font(.callout)
 									.bold()
 									.foregroundColor(Color.green)
@@ -47,7 +47,7 @@ struct HomeView: View {
 							VStack(alignment: .leading,spacing: 8){
 								Text("Stand")
 									.font(.callout)
-								Text("\(viewModel.stand) hours")
+								Text("\(viewModel.standTime) hours")
 									.font(.callout)
 									.bold()
 									.foregroundColor(Color.blue)
@@ -64,13 +64,13 @@ struct HomeView: View {
 							)
 							
 							ProgressCircleView(
-								progress: $viewModel.stand,
+								progress: $viewModel.exercise,
 								goal: 600,
 								color: .green
 							)
 							.padding(.all,20	)
 							ProgressCircleView(
-								progress: $viewModel.stand,
+								progress: $viewModel.standTime,
 								goal: 600,
 								color: .blue
 							)
