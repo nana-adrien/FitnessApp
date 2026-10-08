@@ -8,15 +8,6 @@
 import SwiftUI
 
 
-struct Activity: Identifiable {
-	let id:Int
-	let title:String
-	let subtitle:String
-	let image:String
-	let tintColor:Color
-	let amount: String
-}
-
 struct ActivityCard: View {
 	@State var activity :Activity
     var body: some View {
