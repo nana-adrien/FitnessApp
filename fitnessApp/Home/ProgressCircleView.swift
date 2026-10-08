@@ -17,12 +17,12 @@ struct ProgressCircleView: View {
 			
 			ZStack{
 				Circle()
-					.stroke(color.opacity(0.3), lineWidth: 20)
+					.stroke(color.opacity(0.3), lineWidth: width)
 				Circle()
 					.trim(from: 0,to:CGFloat(progress)/CGFloat(goal))
 					.stroke(
 						color,
-						style: StrokeStyle(lineWidth: 20,lineCap: .round)
+						style: StrokeStyle(lineWidth: width,lineCap: .round)
 					)
 					.rotationEffect(.degrees(-90))
 					.shadow(radius: 5)
