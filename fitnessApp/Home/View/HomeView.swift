@@ -101,18 +101,21 @@ struct HomeView: View {
 						.padding(.horizontal)
 					}.padding(.top)
 					
-					LazyVGrid(
-						columns:Array(repeating: GridItem(spacing:20), count: 2),
-					){
-						ForEach(viewModel.mockActivities,id:\.id){activity in
-							ActivityCard(
-								activity: activity
-							)
+					if !viewModel.activities.isEmpty{
+						LazyVGrid(
+							columns:Array(repeating: GridItem(spacing:20), count: 2),
+						){
+							ForEach(viewModel.activities,id:\.id){activity in
+								ActivityCard(
+									activity: activity
+								)
+							}
+							
 						}
-						
 					}
+					
 					HStack{
-						Text("Fitness Activity")
+						Text("Recent Workouts")
 							.font(.title2)
 						
 						Spacer()

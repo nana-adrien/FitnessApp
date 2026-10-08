@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Activity: Identifiable {
-	let id:Int
+	var id:UUID = UUID()
 	let title:String
 	let subtitle:String
 	let image:String

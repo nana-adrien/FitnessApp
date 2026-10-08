@@ -44,6 +44,6 @@ struct WorkoutCard: View {
 
 #Preview {
     WorkoutCard(
-		workout: Workout(id: 0, title: "Running", image: "figure.run", tintColor: .green, duration: "23 mins", date: "Aug 3", calories: "432 kcal")
+		workout: Workout( title: "Running", image: "figure.run", tintColor: .green, duration: "23 mins", date: "Aug 3", calories: "432 kcal")
 	)
 }
